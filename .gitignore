@@ -1,0 +1,5 @@
+node_modules
+.next
+coverage
+.superpowers
+npm-debug.log*
