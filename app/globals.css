@@ -265,6 +265,66 @@ textarea {
   font-size: 1rem;
 }
 
+.result-placeholder strong,
+.result-card strong,
+.result-meta strong {
+  display: block;
+}
+
+.result-card {
+  padding: 20px 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(31, 42, 55, 0.08);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.result-card.correct {
+  background: rgba(34, 181, 115, 0.12);
+  border-color: rgba(34, 181, 115, 0.28);
+}
+
+.result-card.incorrect {
+  background: rgba(255, 139, 102, 0.12);
+  border-color: rgba(255, 139, 102, 0.28);
+}
+
+.result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.result-head span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.result-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.result-meta div {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.result-meta small {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+}
+
 .recommended-card a,
 .chat-input button {
   border: none;
@@ -356,6 +416,10 @@ textarea {
   .hero-grid,
   .learning-layout,
   .subject-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-meta {
     grid-template-columns: 1fr;
   }
 
