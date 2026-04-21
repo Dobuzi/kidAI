@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { buildLearningResponse, type Difficulty, type SubjectKey } from "@/lib/ai/session";
 import { saveRecentLearning } from "@/lib/storage/recent-learning";
@@ -18,9 +19,19 @@ export function ChatPanel({
   initialPrompt: string;
   subject: SubjectKey;
 }) {
+  const searchParams = useSearchParams();
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
   const [followUp, setFollowUp] = useState("");
-  const [activePrompt, setActivePrompt] = useState(initialPrompt);
+  const promptFromQuery = searchParams.get("prompt")?.trim();
+  const [activePrompt, setActivePrompt] = useState(promptFromQuery || initialPrompt);
+
+  useEffect(() => {
+    if (!promptFromQuery) {
+      return;
+    }
+
+    setActivePrompt(promptFromQuery);
+  }, [promptFromQuery]);
 
   const response = useMemo(
     () =>

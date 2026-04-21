@@ -1,17 +1,25 @@
-"use client";
-
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { ChatPanel } from "@/components/chat-panel";
 import { ProblemPanel } from "@/components/problem-panel";
 import { recommendedProblems } from "@/lib/data/problems";
-import { getSubject } from "@/lib/data/subjects";
+import { getSubject, subjects } from "@/lib/data/subjects";
 
-export default function LearningPage() {
-  const params = useParams<{ subject: string }>();
-  const searchParams = useSearchParams();
-  const subjectKey = params.subject;
+type LearningPageProps = {
+  params: Promise<{
+    subject: string;
+  }>;
+};
+
+export function generateStaticParams() {
+  return subjects.map((subject) => ({
+    subject: subject.key
+  }));
+}
+
+export default async function LearningPage({ params }: LearningPageProps) {
+  const { subject: subjectKey } = await params;
   const subject = getSubject(subjectKey);
 
   if (!subject) {
@@ -28,11 +36,7 @@ export default function LearningPage() {
     );
   }
 
-  const prompt = searchParams.get("prompt") ?? recommendedProblems[subject.key].prompt;
-  const problem = {
-    ...recommendedProblems[subject.key],
-    prompt
-  };
+  const problem = recommendedProblems[subject.key];
 
   return (
     <main className="shell">
@@ -41,7 +45,9 @@ export default function LearningPage() {
       </Link>
       <div className="learning-layout">
         <ProblemPanel problem={problem} subject={subject} />
-        <ChatPanel initialPrompt={problem.prompt} subject={subject.key} />
+        <Suspense fallback={null}>
+          <ChatPanel initialPrompt={problem.prompt} subject={subject.key} />
+        </Suspense>
       </div>
     </main>
   );
