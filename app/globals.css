@@ -56,11 +56,10 @@ textarea {
 }
 
 .hero {
-  padding: 40px;
+  padding: 36px;
 }
 
 .hero-grid,
-.home-columns,
 .learning-layout {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
@@ -110,7 +109,8 @@ textarea {
 .hero-board,
 .response-stack,
 .recent-list,
-.subject-grid {
+.subject-grid,
+.choice-group {
   display: grid;
   gap: 14px;
 }
@@ -126,6 +126,10 @@ textarea {
 
 .section {
   margin-top: 26px;
+}
+
+.concise-highlight {
+  display: grid;
 }
 
 .section-header {
@@ -215,6 +219,52 @@ textarea {
   justify-content: space-between;
 }
 
+.choice-group button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.choice-group button:hover,
+.choice-group button:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 139, 102, 0.5);
+}
+
+.choice-group button.active {
+  background: rgba(255, 139, 102, 0.12);
+  border-color: rgba(255, 139, 102, 0.6);
+}
+
+.choice-group button span {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #1f2a37;
+  color: white;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.choice-group button strong {
+  font-size: 1rem;
+}
+
 .recommended-card a,
 .chat-input button {
   border: none;
@@ -264,19 +314,6 @@ textarea {
   font-size: 0.92rem;
 }
 
-.chat-input {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.chat-input input {
-  flex: 1;
-  min-width: 0;
-  padding: 14px 16px;
-  border-radius: 999px;
-}
-
 .subject-banner {
   display: flex;
   align-items: center;
@@ -297,7 +334,6 @@ textarea {
 
 @media (max-width: 980px) {
   .hero-grid,
-  .home-columns,
   .learning-layout,
   .subject-grid {
     grid-template-columns: 1fr 1fr;
@@ -318,14 +354,9 @@ textarea {
   }
 
   .hero-grid,
-  .home-columns,
   .learning-layout,
   .subject-grid {
     grid-template-columns: 1fr;
-  }
-
-  .chat-input {
-    flex-direction: column;
   }
 
   .title {

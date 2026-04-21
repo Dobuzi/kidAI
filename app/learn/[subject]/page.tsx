@@ -46,7 +46,7 @@ export default async function LearningPage({ params }: LearningPageProps) {
       <div className="learning-layout">
         <ProblemPanel problem={problem} subject={subject} />
         <Suspense fallback={null}>
-          <ChatPanel initialPrompt={problem.prompt} subject={subject.key} />
+          <ChatPanel problem={problem} subject={subject.key} />
         </Suspense>
       </div>
     </main>

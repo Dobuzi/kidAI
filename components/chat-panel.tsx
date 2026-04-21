@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { buildLearningResponse, type Difficulty, type SubjectKey } from "@/lib/ai/session";
+import type { PracticeProblem } from "@/lib/data/problems";
 import { saveRecentLearning } from "@/lib/storage/recent-learning";
 
 const difficultyOptions: Array<{ value: Difficulty; label: string }> = [
@@ -13,51 +13,73 @@ const difficultyOptions: Array<{ value: Difficulty; label: string }> = [
 ];
 
 export function ChatPanel({
-  initialPrompt,
+  problem,
   subject
 }: {
-  initialPrompt: string;
+  problem: PracticeProblem;
   subject: SubjectKey;
 }) {
-  const searchParams = useSearchParams();
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
-  const [followUp, setFollowUp] = useState("");
-  const promptFromQuery = searchParams.get("prompt")?.trim();
-  const [activePrompt, setActivePrompt] = useState(promptFromQuery || initialPrompt);
+  const [selectedChoiceId, setSelectedChoiceId] = useState(problem.choices[0]?.id ?? "");
 
-  useEffect(() => {
-    if (!promptFromQuery) {
-      return;
-    }
-
-    setActivePrompt(promptFromQuery);
-  }, [promptFromQuery]);
+  const selectedChoice =
+    problem.choices.find((choice) => choice.id === selectedChoiceId) ?? problem.choices[0];
+  const correctChoice = problem.choices.find((choice) => choice.id === problem.correctChoice);
 
   const response = useMemo(
     () =>
       buildLearningResponse({
         subject,
         difficulty,
-        prompt: activePrompt
+        prompt: problem.prompt,
+        selectedChoice: selectedChoice?.text ?? "",
+        correctChoice: correctChoice?.text ?? "",
+        isCorrect: selectedChoice?.id === problem.correctChoice
       }),
-    [activePrompt, difficulty, subject]
+    [
+      correctChoice?.text,
+      difficulty,
+      problem.correctChoice,
+      problem.prompt,
+      selectedChoice?.id,
+      selectedChoice?.text,
+      subject
+    ]
   );
 
   useEffect(() => {
     saveRecentLearning({
       subject,
-      title: activePrompt,
+      title: problem.title,
       timestamp: new Date().toISOString()
     });
-  }, [activePrompt, subject]);
+  }, [problem.title, subject]);
 
   return (
     <section className="panel">
       <div className="section-header">
         <div>
-          <h2>AI 학습 설명</h2>
-          <p>힌트부터 시작해서 차근차근 이해할 수 있게 도와줘요.</p>
+          <h2>정답 고르기</h2>
+          <p>답을 하나 고르면 바로 힌트와 풀이가 바뀌어요.</p>
         </div>
+      </div>
+
+      <div className="choice-group">
+        {problem.choices.map((choice) => {
+          const isActive = choice.id === selectedChoiceId;
+
+          return (
+            <button
+              key={choice.id}
+              className={isActive ? "active" : undefined}
+              type="button"
+              onClick={() => setSelectedChoiceId(choice.id)}
+            >
+              <span>{choice.id.toUpperCase()}</span>
+              <strong>{choice.text}</strong>
+            </button>
+          );
+        })}
       </div>
 
       <div>
@@ -89,29 +111,6 @@ export function ChatPanel({
             <p>{section.content}</p>
           </article>
         ))}
-      </div>
-
-      <div className="chat-input">
-        <input
-          placeholder="다른 질문도 이어서 해볼까요?"
-          value={followUp}
-          onChange={(event) => setFollowUp(event.target.value)}
-        />
-        <button
-          type="button"
-          onClick={() => {
-            const nextPrompt = followUp.trim();
-
-            if (!nextPrompt) {
-              return;
-            }
-
-            setActivePrompt(nextPrompt);
-            setFollowUp("");
-          }}
-        >
-          다시 물어보기
-        </button>
       </div>
     </section>
   );

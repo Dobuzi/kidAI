@@ -11,6 +11,9 @@ type BuildLearningResponseInput = {
   subject: string;
   difficulty: Difficulty;
   prompt: string;
+  selectedChoice: string;
+  correctChoice: string;
+  isCorrect: boolean;
 };
 
 type LearningResponse = {
@@ -71,17 +74,20 @@ export function buildLearningResponse(
 ): LearningResponse {
   const subject = isSubjectKey(input.subject) ? input.subject : "math";
   const label = subjectLabels[subject];
+  const feedback = input.isCorrect
+    ? `좋아요. 고른 답: ${input.selectedChoice}`
+    : `다시 보자. 고른 답: ${input.selectedChoice} / 정답: ${input.correctChoice}`;
 
   return {
     title: `${label} AI 도우미`,
     sections: [
       {
         type: "hint",
-        content: `${subjectHints[subject]} 질문: ${input.prompt}`
+        content: `${feedback} 힌트: ${subjectHints[subject]}`
       },
       {
         type: "explanation",
-        content: subjectExplanations[subject][input.difficulty]
+        content: `${subjectExplanations[subject][input.difficulty]} 문제 연결: ${input.prompt}`
       },
       {
         type: "summary",

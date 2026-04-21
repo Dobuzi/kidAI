@@ -13,9 +13,9 @@ export function RecommendedProblemCard({ problem }: { problem: PracticeProblem }
       <div>
         <span className="tag">{subject?.name ?? "추천 문제"}</span>
         <h3>{problem.title}</h3>
-        <p>{problem.prompt}</p>
+        <p>{problem.question}</p>
       </div>
-      <Link href={`/learn/${problem.subject}?prompt=${encodeURIComponent(problem.prompt)}`}>
+      <Link href={`/learn/${problem.subject}`}>
         추천 문제 풀기
       </Link>
     </article>
